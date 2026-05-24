@@ -36,6 +36,7 @@ const DEVICE_LINKS = [
 ]
 
 const GUIDE_LINKS = [
+  { name: 'PS4 Linux Loader', summary: 'Official kexec payload releases', url: 'https://github.com/ps4-linux/ps4-linux-loader/releases' },
   { name: 'PS4 Linux Tutorial', summary: 'End-to-end setup guide', url: 'https://dionkill.github.io/ps4-linux-tutorial/' },
   { name: 'TheVorkMan PS4 Linux Tutorial', summary: 'Setup and troubleshooting guide', url: 'https://github.com/TheVorkMan/ps4-linux-tutorial' },
   { name: 'ZFentom PS4 Guide', summary: 'PS4 Linux information and tips', url: 'https://zfentom.github.io/playstation-linux-tutorial/ps4/information.html' },
