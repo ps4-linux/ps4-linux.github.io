@@ -58,7 +58,12 @@ const parseJsonFile = async (filePath) => {
 
 const readEntries = async ({ dir, type }) => {
   const directory = path.join(root, dir)
-  const dirEntries = await readdir(directory, { withFileTypes: true })
+  let dirEntries
+  try {
+    dirEntries = await readdir(directory, { withFileTypes: true })
+  } catch {
+    return []
+  }
   const jsonFiles = dirEntries.filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
   const items = []
 

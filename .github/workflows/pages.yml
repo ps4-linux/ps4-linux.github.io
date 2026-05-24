@@ -1,4 +1,4 @@
-name: Build and Deploy ps4DB
+name: Build and Deploy ps4-linux
 
 on:
   push:
