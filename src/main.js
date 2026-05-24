@@ -27,26 +27,41 @@ const FAMILY = {
   arch: { label: 'Arch', color: '#1793d1' },
   fedora: { label: 'Fedora', color: '#5a8fd6' },
   atomic: { label: 'Fedora Atomic', color: '#c08bff' },
-  recovery: { label: 'Recovery', color: '#ff7a2e' },
 }
 
 // Static reference links — not crowd-sourced, kept in code.
 const DEVICE_LINKS = [
-  { name: 'GSMArena', summary: 'Full specifications', url: 'https://www.gsmarena.com/xiaomi_pad_6-12237.php' },
-  { name: 'NanoReview', summary: 'Benchmarks & review', url: 'https://nanoreview.net/en/tablet/xiaomi-pad-6' },
+  { name: 'PlayStation 4 (Wikipedia)', summary: 'Hardware overview', url: 'https://it.wikipedia.org/wiki/PlayStation_4' },
+  { name: 'PS4 Pro GPU (TechPowerUp)', summary: 'GPU specifications', url: 'https://www.techpowerup.com/gpu-specs/playstation-4-pro-gpu.c2876' },
 ]
 
-const TELEGRAM_URL = 'https://t.me/pipadb'
+const GUIDE_LINKS = [
+  { name: 'PS4 Linux Tutorial', summary: 'End-to-end setup guide', url: 'https://dionkill.github.io/ps4-linux-tutorial/' },
+  { name: 'TheVorkMan PS4 Linux Tutorial', summary: 'Setup and troubleshooting guide', url: 'https://github.com/TheVorkMan/ps4-linux-tutorial' },
+  { name: 'ZFentom PS4 Guide', summary: 'PS4 Linux information and tips', url: 'https://zfentom.github.io/playstation-linux-tutorial/ps4/information.html' },
+]
+
+const REVISIONS = ['Baikal', 'Belize', 'Aeolia']
+const MODELS = ['Pro', 'Slim', 'Fat']
+
+const DISCORD_URL = 'https://discord.gg/8fhkyEXd48'
+
+const COMMUNITY_LINKS = [
+  { name: 'Discord', summary: 'Community chat & support', url: DISCORD_URL },
+]
 
 const state = {
   items: [],
   filtered: [],
   distros: [],
-  recoveries: [],
+  kernels: [],
+  initramfs: [],
   metadata: null,
   query: '',
   type: 'all',
   status: 'all',
+  model: 'all',
+  hasProof: false,
   rendered: 0,
 }
 
@@ -56,7 +71,7 @@ app.innerHTML = `
       <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6">
         <button id="site-logo" type="button" class="flex items-center gap-2.5 bg-transparent p-0 text-left">
           <img src="./tux.png" alt="" class="h-8 w-auto" />
-          <span class="font-display text-lg">pipaDB</span>
+          <span class="font-display text-lg">ps4-linux</span>
         </button>
         <div class="relative shrink-0">
           <button id="nav-menu-toggle" type="button" class="btn-ghost h-9 w-9 p-0"
@@ -82,21 +97,28 @@ app.innerHTML = `
               </div>
               <div class="h-px bg-line/30"></div>
               <a href="./api/index.json" class="btn-ghost w-full justify-start">API</a>
-              <a href="${TELEGRAM_URL}" target="_blank" rel="noopener noreferrer" class="btn-ghost w-full justify-start">Telegram</a>
-              <a href="https://github.com/PipaDB/pipadb.github.io" target="_blank" rel="noopener noreferrer" class="btn-primary w-full justify-start">Submit report</a>
+              <a href="${DISCORD_URL}" target="_blank" rel="noopener noreferrer" class="btn-ghost w-full justify-start">Discord</a>
+              <a href="https://github.com/ps4-linux/ps4-linux.github.io" target="_blank" rel="noopener noreferrer" class="btn-primary w-full justify-start">Submit report</a>
             </div>
           </div>
         </div>
       </div>
     </nav>
 
-    <header id="top" class="border-b-2 border-line">
+    <div id="site-alert" class="bg-red-600 text-white py-3 px-4 text-sm border-b-4 border-red-800">
+        <div class="mx-auto max-w-6xl flex items-center justify-between gap-4">
+          <div><strong>Important:</strong> ps4-linux only supports open-source kernel trees with public source and attribution. Closed or unattributed forks (e.g., KHEOPS) are unsupported and <strong>will not be assisted</strong>. Most supported platforms: Aeolia &amp; Belize. Baikal was recently upstreamed to 7.0 and may remain unstable.</div>
+          <button id="site-alert-close" class="px-3 py-1 bg-white/10 text-white rounded">Dismiss</button>
+        </div>
+      </div>
+
+      <header id="top" class="border-b-2 border-line">
       <div class="mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-16">
         <div class="grid items-center gap-6 md:gap-8 md:grid-cols-[1.2fr_0.8fr]">
           <div class="hero-copy min-w-0">
-            <span class="tier tier-platinum mb-5 inline-flex max-w-full whitespace-normal">Xiaomi Pad 6 · codename "pipa"</span>
+            <span class="tier tier-platinum mb-5 block w-fit max-w-full whitespace-normal">PlayStation 4</span>
             <h1 class="hero-title font-display text-[3.25rem] leading-[0.9] tracking-tight [word-break:break-word] sm:text-7xl md:text-[8.5rem]">
-              Pipa<span class="text-brand hero-db">DB
+              PS4<span class="text-brand hero-db">LINUX
                 <img src="./cinnamon.png" alt="" aria-hidden="true" class="cinnamon-roll" width="92" height="48" />
               </span>
             </h1>
@@ -106,23 +128,23 @@ app.innerHTML = `
               <span id="time-message" class="text-ink/50"></span>
             </div>
             <p class="mt-5 max-w-xl font-mono text-sm leading-relaxed text-ink/70 md:text-base">
-              A community-driven compatibility database for games, apps, distros
-              &amp; recoveries on the Xiaomi Pad 6.
+              A community-driven compatibility database for games, apps, distros,
+              kernels, &amp; initramfs on the PlayStation 4.
             </p>
             <div class="mt-7 flex flex-wrap gap-3">
               <a href="#browse" class="btn-primary">Browse the database</a>
               <a href="./api/index.json" class="btn-ghost">View the API</a>
             </div>
-            <a href="${TELEGRAM_URL}" target="_blank" rel="noopener noreferrer"
+            <a href="${DISCORD_URL}" target="_blank" rel="noopener noreferrer"
                class="mt-4 inline-flex items-center gap-2 font-mono text-sm font-bold text-brand transition hover:text-white">
-              → Join the pipaDB Telegram group
+              → Join the ps4-linux Discord
             </a>
           </div>
           <div class="hero-stage relative h-52 overflow-hidden sm:h-64 md:h-96">
             <img
               id="hero-tablet"
-              src="./pipa.png"
-              alt="Xiaomi Pad 6 (pipa)"
+              src="https://gmedia.playstation.com/is/image/SIEPDC/ps4-pro-product-thumbnail-01-en-14sep21?$facebook$"
+              alt="PlayStation 4 Pro"
               class="absolute left-1/2 top-1/2 h-full w-auto max-w-none -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_25px_45px_rgba(0,0,0,0.85)]"
             />
           </div>
@@ -142,26 +164,39 @@ app.innerHTML = `
     </section>
 
     <main id="browse" class="mx-auto max-w-6xl scroll-mt-20 px-4 pb-20 md:px-6">
-      <div class="box-shadow p-4 md:p-5">
-        <div class="grid grid-cols-1 gap-3 md:grid-cols-[1.6fr_1fr_1fr]">
-          <div>
-            <label class="sr-only" for="search">Search</label>
-            <input id="search" type="search" placeholder="search title / tester / tag…" class="field w-full" />
-          </div>
-          <div>
-            <label class="sr-only" for="type-filter">Type</label>
+        <div class="box-shadow p-4 md:p-5">
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
+            <div>
+              <label class="sr-only" for="search">Search</label>
+              <input id="search" type="search" placeholder="search title / tester / tag…" class="field w-full" />
+            </div>
+            <div>
+              <label class="sr-only" for="type-filter">Type</label>
             <select id="type-filter" class="field w-full">
               <option value="all">All types</option>
               <option value="game">Games</option>
               <option value="app">Apps</option>
             </select>
           </div>
-          <div>
-            <label class="sr-only" for="status-filter">Tier</label>
-            <select id="status-filter" class="field w-full">
-              <option value="all">All tiers</option>
-            </select>
+            <div>
+              <label class="sr-only" for="status-filter">Tier</label>
+              <select id="status-filter" class="field w-full">
+                <option value="all">All tiers</option>
+              </select>
+            </div>
+            <div>
+              <label class="sr-only" for="model-filter">Model</label>
+              <select id="model-filter" class="field w-full">
+                <option value="all">All models</option>
+                ${MODELS.map((model) => `<option value="${model.toLowerCase()}">${model}</option>`).join('')}
+              </select>
+            </div>
           </div>
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          <label class="inline-flex cursor-pointer items-center gap-2 font-mono text-xs">
+            <input id="has-proof" type="checkbox" class="h-4 w-4" />
+            <span>Has proof only</span>
+          </label>
         </div>
         <div id="tier-legend" class="mt-4 flex flex-wrap gap-2 border-t-2 border-line/15 pt-4"></div>
       </div>
@@ -179,10 +214,10 @@ app.innerHTML = `
     <footer class="border-t-2 border-line bg-panel">
       <div class="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-8 text-center md:px-6">
         <div class="flex flex-wrap items-center justify-center gap-2">
-          <a href="${TELEGRAM_URL}" target="_blank" rel="noopener noreferrer" class="btn-ghost">Telegram group</a>
-          <a href="https://github.com/PipaDB/pipadb.github.io" target="_blank" rel="noopener noreferrer" class="btn-ghost">GitHub</a>
+          <a href="${DISCORD_URL}" target="_blank" rel="noopener noreferrer" class="btn-ghost">Discord</a>
+          <a href="https://github.com/ps4-linux/ps4-linux.github.io" target="_blank" rel="noopener noreferrer" class="btn-ghost">GitHub</a>
         </div>
-        <p class="font-mono text-xs text-ink/55">pipaDB — unofficial community database. Not affiliated with Xiaomi or ProtonDB.</p>
+        <p class="font-mono text-xs text-ink/55">ps4-linux — unofficial community database. Not affiliated with Sony or PlayStation.</p>
         <p id="meta-guidance" class="font-mono text-xs text-ink/45"></p>
       </div>
     </footer>
@@ -195,6 +230,8 @@ app.innerHTML = `
 const searchInput = document.querySelector('#search')
 const typeFilter = document.querySelector('#type-filter')
 const statusFilter = document.querySelector('#status-filter')
+const modelFilter = document.querySelector('#model-filter')
+const hasProofToggle = document.querySelector('#has-proof')
 const resultsSummary = document.querySelector('#results-summary')
 const resultsContainer = document.querySelector('#results')
 const guidanceText = document.querySelector('#meta-guidance')
@@ -209,6 +246,20 @@ const mascotEgg = document.querySelector('#mascot-egg')
 const themeSelect = document.querySelector('#theme-select')
 const menuToggle = document.querySelector('#nav-menu-toggle')
 const menuPanel = document.querySelector('#nav-menu')
+
+const siteAlert = document.querySelector('#site-alert')
+const siteAlertClose = document.querySelector('#site-alert-close')
+if (siteAlert) {
+  try {
+    if (localStorage.getItem('ps4-linux-site-alert-hidden')) siteAlert.style.display = 'none'
+  } catch (e) {}
+}
+if (siteAlert && siteAlertClose) {
+  siteAlertClose.addEventListener('click', () => {
+    siteAlert.style.display = 'none'
+    try { localStorage.setItem('ps4-linux-site-alert-hidden', '1') } catch (e) {}
+  })
+}
 
 const revealMascot = () => {
   if (!mascotEgg) return
@@ -266,7 +317,7 @@ if (menuToggle && menuPanel) {
   })
 }
 
-const THEME_KEY = 'pipadb-theme'
+const THEME_KEY = 'ps4-linux-theme'
 const THEMES = ['dark', 'light', 'cappuccino', 'strawberry', 'mint', 'ocean', 'tokyo-night']
 
 const applyTheme = (theme) => {
@@ -330,6 +381,18 @@ statusFilter.addEventListener('change', (event) => {
   applyFilters()
 })
 
+modelFilter.addEventListener('change', (event) => {
+  state.model = event.target.value
+  applyFilters()
+})
+
+if (hasProofToggle) {
+  hasProofToggle.addEventListener('change', (event) => {
+    state.hasProof = event.target.checked
+    applyFilters()
+  })
+}
+
 loadMoreBtn.addEventListener('click', () => renderPage(false))
 
 const escapeHtml = (value) =>
@@ -390,9 +453,78 @@ const renderResources = () => {
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         ${DEVICE_LINKS.map(linkCardHtml).join('')}
       </div>
+      <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div class="box-shadow px-4 py-3">
+          <p class="label mb-2">Revisions</p>
+          <div class="flex flex-wrap gap-2">
+            ${REVISIONS.map((rev) => `<span class="chip">${escapeHtml(rev)}</span>`).join('')}
+          </div>
+        </div>
+        <div class="box-shadow px-4 py-3">
+          <p class="label mb-2">Models</p>
+          <div class="flex flex-wrap gap-2">
+            ${MODELS.map((model) => `<span class="chip">${escapeHtml(model)}</span>`).join('')}
+          </div>
+        </div>
+      </div>
     </div>
+    <div>
+      <p class="label mb-2.5">Guides</p>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        ${GUIDE_LINKS.map(linkCardHtml).join('')}
+      </div>
+    </div>
+    <div>
+      <p class="label mb-2.5">Community</p>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        ${COMMUNITY_LINKS.map(linkCardHtml).join('')}
+      </div>
+    </div>
+    ${renderTopTestersHtml()}
     ${collapsibleHtml('grp-distros', 'Linux distros', state.distros)}
-    ${collapsibleHtml('grp-recoveries', 'Recoveries', state.recoveries)}
+    ${collapsibleHtml('grp-kernels', 'Kernels', state.kernels)}
+    ${collapsibleHtml('grp-initramfs', 'Initramfs', state.initramfs)}
+  `
+}
+
+const renderTopTestersHtml = () => {
+  const counts = new Map()
+  for (const item of state.items) {
+    const handle = (item.tb ?? '').trim()
+    if (!handle) continue
+    counts.set(handle, (counts.get(handle) ?? 0) + 1)
+  }
+  if (counts.size === 0) return ''
+  const top = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 10)
+  const max = top[0][1]
+  const rows = top
+    .map(([handle, n], i) => {
+      const width = Math.max(6, Math.round((n / max) * 100))
+      return `
+        <li class="flex items-center gap-3">
+          <span class="w-6 shrink-0 text-right font-mono text-xs text-ink/55">${i + 1}.</span>
+          <span class="min-w-0 flex-1">
+            <span class="flex items-center justify-between gap-2">
+              <span class="truncate font-bold">${escapeHtml(handle)}</span>
+              <span class="font-mono text-xs text-ink/60">${n}</span>
+            </span>
+            <span class="mt-1 block h-1.5 w-full bg-line/15">
+              <span class="block h-full bg-brand" style="width:${width}%"></span>
+            </span>
+          </span>
+        </li>
+      `
+    })
+    .join('')
+  return `
+    <div>
+      <p class="label mb-2.5">Top testers</p>
+      <div class="box-shadow px-4 py-4">
+        <ol class="space-y-3">${rows}</ol>
+      </div>
+    </div>
   `
 }
 
@@ -457,6 +589,35 @@ const cardHtml = (item) => {
   const protonLine = item.proton
     ? `<div class="flex justify-between gap-3"><span class="label shrink-0">Proton</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(item.proton)}</span></div>`
     : ''
+  const distroLine = item.distro
+    ? `<div class="flex justify-between gap-3"><span class="label shrink-0">Distro</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(item.distro)}</span></div>`
+    : ''
+  const kernelLine = item.kernel
+    ? `<div class="flex justify-between gap-3"><span class="label shrink-0">Kernel</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(item.kernel)}</span></div>`
+    : ''
+  const models = Array.isArray(item.models)
+    ? item.models
+    : item.model
+      ? [item.model]
+      : []
+  const modelLine = models.length
+    ? `<div class="flex justify-between gap-3"><span class="label shrink-0">Model</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(models.join(', '))}</span></div>`
+    : ''
+  const storageLine = item.storage
+    ? `<div class="flex justify-between gap-3"><span class="label shrink-0">Storage</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(item.storage)}</span></div>`
+    : ''
+  const fpsLine = item.fps
+    ? `<div class="flex justify-between gap-3"><span class="label shrink-0">FPS</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(item.fps)}</span></div>`
+    : ''
+  const resolutionLine = item.resolution
+    ? `<div class="flex justify-between gap-3"><span class="label shrink-0">Resolution</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(item.resolution)}</span></div>`
+    : ''
+  const performanceLine = item.performance
+    ? `<div class="flex justify-between gap-3"><span class="label shrink-0">Performance</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(item.performance)}</span></div>`
+    : ''
+  const proofLink = item.proof
+    ? `<a href="${escapeHtml(item.proof)}" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex w-fit border-b-2 border-line font-mono text-xs font-bold uppercase tracking-wide transition hover:text-brand">Proof ↗</a>`
+    : ''
   const storeLine = item.store ? `<span class="chip">${escapeHtml(item.store)}</span>` : ''
 
   return `
@@ -473,10 +634,18 @@ const cardHtml = (item) => {
         <div class="mt-3 space-y-1.5 text-sm">
           <div class="flex justify-between gap-3"><span class="label shrink-0">Tested by</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(item.tb)}</span></div>
           <div class="flex justify-between gap-3"><span class="label shrink-0">Compat</span><span class="min-w-0 text-right font-bold [overflow-wrap:anywhere]">${escapeHtml(item.compatibility)}</span></div>
+          ${modelLine}
+          ${distroLine}
+          ${kernelLine}
+          ${storageLine}
+          ${fpsLine}
+          ${resolutionLine}
+          ${performanceLine}
           ${protonLine}
         </div>
         ${notes}
         <div class="mt-3 flex flex-wrap items-center gap-1.5">${storeLine}${tags}</div>
+        ${proofLink}
         <a class="mt-4 inline-flex w-fit border-b-2 border-line font-mono text-xs font-bold uppercase tracking-wide transition hover:text-brand" href="./api/items/${encodeURIComponent(item.id)}.json">Per-title JSON ↗</a>
       </div>
     </article>
@@ -535,11 +704,26 @@ const applyFilters = () => {
     filtered = filtered.filter((item) => item.status === state.status)
   }
 
+  if (state.model !== 'all') {
+    filtered = filtered.filter((item) => {
+      const models = Array.isArray(item.models)
+        ? item.models
+        : item.model
+          ? [item.model]
+          : []
+      return models.includes(state.model)
+    })
+  }
+
+  if (state.hasProof) {
+    filtered = filtered.filter((item) => typeof item.proof === 'string' && item.proof.length > 0)
+  }
+
   if (state.query) {
     const fuse = new Fuse(filtered, {
       threshold: 0.33,
       ignoreLocation: true,
-      keys: ['name', 'tb', 'compatibility', 'notes', 'tags'],
+      keys: ['name', 'tb', 'compatibility', 'notes', 'tags', 'models', 'distro', 'kernel'],
     })
     filtered = fuse.search(state.query).map((result) => result.item)
   }
@@ -575,7 +759,7 @@ const playIntro = () => {
     clearProps: 'opacity,visibility,transform',
   })
 
-  // The Pad 6 slides out from behind the wordmark.
+  // The PS4 slides out from behind the wordmark.
   tl.fromTo(
     '#hero-tablet',
     { xPercent: -150, yPercent: -50, autoAlpha: 0, rotate: -10 },
@@ -614,30 +798,38 @@ const fetchJson = async (url) => {
 }
 
 const init = async () => {
-  // Distros & recoveries are independent — load them even if the main index fails.
-  Promise.allSettled([fetchJson('./api/distros.json'), fetchJson('./api/recoveries.json')]).then(
-    ([distros, recoveries]) => {
-      state.distros = distros.status === 'fulfilled' ? distros.value : []
-      state.recoveries = recoveries.status === 'fulfilled' ? recoveries.value : []
-      renderResources()
-    },
-  )
+  // Distros, kernels, and initramfs are independent — load them even if the main index fails.
+  Promise.allSettled([
+    fetchJson('./api/distros.json'),
+    fetchJson('./api/kernels.json'),
+    fetchJson('./api/initramfs.json'),
+  ]).then(([distros, kernels, initramfs]) => {
+    state.distros = distros.status === 'fulfilled' ? distros.value : []
+    state.kernels = kernels.status === 'fulfilled' ? kernels.value : []
+    state.initramfs = initramfs.status === 'fulfilled' ? initramfs.value : []
+    renderResources()
+  })
 
   try {
     const payload = await fetchJson('./api/index.json')
     state.items = payload.items ?? []
     state.metadata = payload
     guidanceText.textContent = payload.guidance ?? ''
+    if (guidanceText) {
+      // Ensure the guidance text is muted and only shown in the footer
+      guidanceText.className = 'font-mono text-xs text-ink/45'
+    }
 
     renderStats()
     renderTierLegend()
     populateStatusFilter()
+    renderResources()
     applyFilters()
     playIntro()
   } catch (error) {
     resultsContainer.innerHTML = `
       <div class="box-shadow col-span-full p-10 text-center">
-        <p class="font-display text-xl text-tier-borked">Failed to load pipaDB data.</p>
+        <p class="font-display text-xl text-tier-borked">Failed to load ps4-linux data.</p>
         <p class="mt-2 font-mono text-sm text-ink/60">${escapeHtml(error.message)}</p>
       </div>
     `

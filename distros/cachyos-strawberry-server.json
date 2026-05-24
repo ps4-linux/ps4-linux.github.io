@@ -1,0 +1,7 @@
+{
+  "id": "cachyos-strawberry-server",
+  "name": "CachyOS Strawberry Server Edition",
+  "family": "arch",
+  "summary": "Server-only CachyOS build (no desktop environment).",
+  "url": "https://github.com/sony-jaguar-devs/distros/releases"
+}

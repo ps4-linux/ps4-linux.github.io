@@ -1,34 +1,27 @@
 [
   {
-    "id": "prism-launcher",
-    "name": "Prism Launcher",
+    "id": "test-app",
+    "name": "Test App",
     "type": "app",
     "status": "platinum",
-    "tb": "@hiiragikagami",
-    "compatibility": "Works out of the box",
-    "notes": "Non-Steam app reported working on Xiaomi Pipa.",
+    "tb": "@testuser",
+    "distro": "arch-baikal",
+    "kernel": "ps4-linux-12xx",
+    "compatibility": "Works perfectly",
+    "notes": "Testing the new fields.",
     "proton": "",
-    "platform": "xiaomi-pipa",
-    "store": "non-steam",
+    "platform": "ps4",
+    "store": "psn",
     "tags": [
-      "launcher",
-      "non-steam"
-    ]
-  },
-  {
-    "id": "obs-studio",
-    "name": "OBS Studio",
-    "type": "app",
-    "status": "borked",
-    "tb": "@hiiragikagami",
-    "compatibility": "Fails / Borked",
-    "notes": "Reported as failure.",
-    "proton": "",
-    "platform": "xiaomi-pipa",
-    "store": "non-steam",
-    "tags": [
-      "capture",
-      "failure"
-    ]
+      "test"
+    ],
+    "models": [
+      "pro"
+    ],
+    "storage": "internal-ssd",
+    "fps": "",
+    "resolution": "",
+    "performance": "smooth",
+    "proof": "https://example.com/proof"
   }
 ]

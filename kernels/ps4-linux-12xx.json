@@ -1,0 +1,6 @@
+{
+  "id": "ps4-linux-12xx",
+  "name": "ps4-linux-12xx (rmuxnet)",
+  "summary": "Open-source PS4 Linux kernel (Aeolia/Belize/Baikal) with stable branches.",
+  "url": "https://github.com/rmuxnet/ps4-linux-12xx"
+}

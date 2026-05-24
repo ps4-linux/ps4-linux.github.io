@@ -1,4 +1,4 @@
-name: Build and Deploy pipaDB
+name: Build and Deploy ps4DB
 
 on:
   push:

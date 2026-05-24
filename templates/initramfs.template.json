@@ -1,0 +1,6 @@
+{
+  "id": "your-initramfs-id",
+  "name": "Your Initramfs",
+  "summary": "Short description of the initramfs bundle",
+  "url": "https://github.com/you/your-repo"
+}

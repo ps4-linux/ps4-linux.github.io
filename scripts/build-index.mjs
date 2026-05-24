@@ -23,9 +23,19 @@ const allowedStatus = new Set([
 ])
 
 const allowedFamily = new Set(['alpine', 'arch', 'fedora', 'atomic', 'debian', 'other'])
+const allowedModels = new Set(['pro', 'slim', 'fat'])
 
-const requiredStringFields = ['id', 'name', 'status', 'tb']
-const defaultGameProton = 'Proton 11.0 ARM64/LOCAL'
+const requiredStringFields = ['id', 'name', 'status', 'tb', 'kernel', 'distro']
+const defaultGameProton = ''
+
+const isHttpsUrl = (value) => {
+  try {
+    const u = new URL(value)
+    return u.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
 
 const normalizeText = (value) => String(value).trim()
 
@@ -81,20 +91,42 @@ const validateEntry = (rawEntry, filePath, expectedType) => {
   ensure(Array.isArray(tags), `${path.relative(root, filePath)} "tags" must be an array`)
   ensure(tags.every((tag) => typeof tag === 'string'), `${path.relative(root, filePath)} tags must only contain strings`)
 
+  const rawModels = rawEntry.models ?? rawEntry.model ?? []
+  const models = (Array.isArray(rawModels) ? rawModels : [rawModels])
+    .map((model) => normalizeText(model).toLowerCase())
+    .filter(Boolean)
+  ensure(models.length > 0, `${path.relative(root, filePath)} must specify "model" or "models" (pro/slim/fat)`)
+  for (const model of models) {
+    ensure(allowedModels.has(model), `${path.relative(root, filePath)} has invalid model "${model}"`)
+  }
+
+  const proof = normalizeText(rawEntry.proof ?? '')
+  if (proof) {
+    ensure(isHttpsUrl(proof), `${path.relative(root, filePath)} "proof" must be an https:// URL`)
+  }
+
   return {
     id,
     name: normalizeText(rawEntry.name),
     type,
     status,
     tb: normalizeText(rawEntry.tb),
+    distro: normalizeText(rawEntry.distro),
+    kernel: normalizeText(rawEntry.kernel),
     compatibility: normalizeText(rawEntry.compatibility ?? 'Unknown'),
     notes: normalizeText(rawEntry.notes ?? ''),
     proton: normalizeText(
       rawEntry.proton ?? (type === 'game' ? defaultGameProton : ''),
     ),
-    platform: normalizeText(rawEntry.platform ?? 'xiaomi-pipa'),
-    store: normalizeText(rawEntry.store ?? 'steam'),
+    platform: normalizeText(rawEntry.platform ?? 'ps4'),
+    store: normalizeText(rawEntry.store ?? 'psn'),
     tags: tags.map((tag) => normalizeText(tag)).filter(Boolean),
+    models,
+    storage: normalizeText(rawEntry.storage ?? ''),
+    fps: normalizeText(rawEntry.fps ?? ''),
+    resolution: normalizeText(rawEntry.resolution ?? ''),
+    performance: normalizeText(rawEntry.performance ?? ''),
+    proof,
   }
 }
 
@@ -132,10 +164,10 @@ const buildApiPayload = (entries) => {
   }, {})
 
   return {
-    project: 'pipaDB',
+    project: 'ps4-linux',
     generatedAt: new Date().toISOString(),
-    platform: 'xiaomi-pipa',
-    guidance: 'If asked to force quit, press wait; some titles need extra startup time.',
+    platform: 'ps4',
+    guidance: 'Most supported platforms: Aeolia and Belize. Baikal was recently upstreamed to 7.0 by rmuxnet and may remain unstable until further testing. ps4-linux only accepts open-source kernel trees with public source and attribution; closed forks or kernels distributed without upstream source (e.g., KHEOPS-style dumps) are unsupported and will not be assisted.',
     submission: 'Add one JSON file per title in games/ or apps/ and open a pull request.',
     stats: {
       total: entries.length,
@@ -154,7 +186,7 @@ const ensureUniqueIds = (entries) => {
   }
 }
 
-// Reads distros/ or recoveries/ — simple link entries, one JSON file each.
+// Reads distros/, kernels/, or initramfs/ — simple link entries, one JSON file each.
 const readResourceFolder = async (dir, { requireFamily }) => {
   const directory = path.join(root, dir)
   let dirEntries
@@ -204,21 +236,21 @@ const generate = async () => {
     await Promise.all(sourceFolders.map((folder) => readEntries(folder)))
   ).flat()
 
-  ensure(allEntries.length > 0, 'No JSON entries found in games/ or apps/')
   ensureUniqueIds(allEntries)
   sortEntries(allEntries)
 
   const distros = await readResourceFolder('distros', { requireFamily: true })
-  const recoveries = await readResourceFolder('recoveries', { requireFamily: false })
+  const kernels = await readResourceFolder('kernels', { requireFamily: false })
+  const initramfs = await readResourceFolder('initramfs', { requireFamily: false })
 
   const payload = {
     ...buildApiPayload(allEntries),
-    resources: { distros: distros.length, recoveries: recoveries.length },
+    resources: { distros: distros.length, kernels: kernels.length, initramfs: initramfs.length },
   }
 
   if (validateOnly) {
     process.stdout.write(
-      `Validated ${allEntries.length} entries, ${distros.length} distros, ${recoveries.length} recoveries.\n`,
+      `Validated ${allEntries.length} entries, ${distros.length} distros, ${kernels.length} kernels, ${initramfs.length} initramfs.\n`,
     )
     return
   }
@@ -234,7 +266,8 @@ const generate = async () => {
     writeJson(path.join(outDir, 'games.json'), games),
     writeJson(path.join(outDir, 'apps.json'), apps),
     writeJson(path.join(outDir, 'distros.json'), distros),
-    writeJson(path.join(outDir, 'recoveries.json'), recoveries),
+    writeJson(path.join(outDir, 'kernels.json'), kernels),
+    writeJson(path.join(outDir, 'initramfs.json'), initramfs),
   ])
 
   await Promise.all(
@@ -244,7 +277,7 @@ const generate = async () => {
   )
 
   process.stdout.write(
-    `Built API for ${allEntries.length} entries, ${distros.length} distros, ${recoveries.length} recoveries.\n`,
+    `Built API for ${allEntries.length} entries, ${distros.length} distros, ${kernels.length} kernels, ${initramfs.length} initramfs.\n`,
   )
 }
 

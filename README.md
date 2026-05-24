@@ -1,6 +1,6 @@
-# pipaDB
+# ps4-linux
 
-pipaDB is a ProtonDB-style compatibility database for Xiaomi Pipa.  
+ps4-linux is a ProtonDB-style compatibility database for PlayStation 4.  
 It is a static site with static JSON API endpoints generated from per-title JSON files.
 
 ## Data model (PR workflow)
@@ -10,7 +10,8 @@ Use one file per entry:
 - `games/*.json` — game compatibility reports
 - `apps/*.json` — app compatibility reports
 - `distros/*.json` — Linux distro ports (`family`: alpine, arch, fedora, atomic, debian, other)
-- `recoveries/*.json` — custom recoveries
+- `kernels/*.json` — custom kernels
+- `initramfs/*.json` — initramfs bundles
 - `templates/*.template.json` — starters for each kind
 - `templates/entry.schema.json` — field definitions for games/apps
 
@@ -19,6 +20,9 @@ GitHub Actions validates JSON, rebuilds the index, and redeploys Pages on push.
 
 `proton` is optional (especially for apps).  
 If omitted, games default to `Proton 11.0 ARM64/LOCAL` and apps keep it blank.
+
+Required on every report: `distro`, `kernel`, and `model`/`models` (pro/slim/fat).  
+Optional but encouraged: `storage`, `fps`, `resolution`, `performance`, and a `proof` link (https URL, not embedded).
 
 ## Commands
 
@@ -33,5 +37,12 @@ If omitted, games default to `Proton 11.0 ARM64/LOCAL` and apps keep it blank.
 - `/api/games.json` - only games
 - `/api/apps.json` - only apps
 - `/api/distros.json` - Linux distro ports
-- `/api/recoveries.json` - custom recoveries
+- `/api/kernels.json` - custom kernels
+- `/api/initramfs.json` - initramfs bundles
 - `/api/items/<id>.json` - per-title endpoint
+
+## Support policy
+
+- Most supported platforms: Aeolia and Belize. Baikal was recently upstreamed from 5.4 to 7.0 by rmuxnet and may remain unstable until further testing.
+- ps4-linux accepts only open-source kernel trees with public source and attribution. Kernels distributed without upstream source or attribution (e.g., KHEOPS-style closed forks) are unsupported — reports using those kernels may be ignored and maintainers will not assist with troubleshooting.
+

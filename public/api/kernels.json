@@ -1,0 +1,14 @@
+[
+  {
+    "id": "ps4-linux-12xx",
+    "name": "ps4-linux-12xx (rmuxnet)",
+    "summary": "Open-source PS4 Linux kernel (Aeolia/Belize/Baikal) with stable branches.",
+    "url": "https://github.com/rmuxnet/ps4-linux-12xx"
+  },
+  {
+    "id": "ps4-linux-12xx-v6-15-4-crashnt-4-7",
+    "name": "ps4-linux-12xx v6.15.4 crashnt-4.7",
+    "summary": "Prebuilt 6.15.4 kernel release (ThinLTO recommended).",
+    "url": "https://github.com/feeRnt/ps4-linux-12xx/releases/tag/v6.15.4__crashnt-4.7"
+  }
+]

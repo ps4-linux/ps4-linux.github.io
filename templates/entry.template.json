@@ -3,9 +3,17 @@
   "name": "Your Title",
   "status": "platinum",
   "tb": "@your-handle",
+  "distro": "arch-baikal",
+  "kernel": "ps4-linux-12xx",
   "compatibility": "Works out of the box",
-  "notes": "If prompted to force quit, press wait.",
-  "platform": "xiaomi-pipa",
-  "store": "steam",
-  "tags": ["out-of-box"]
+  "notes": "Include firmware version and any required setup.",
+  "platform": "ps4",
+  "store": "psn",
+  "tags": ["out-of-box"],
+  "models": ["pro", "slim", "fat"],
+  "storage": "internal-hdd",
+  "fps": "30",
+  "resolution": "1080p",
+  "performance": "smooth",
+  "proof": "https://youtu.be/your-video-id"
 }

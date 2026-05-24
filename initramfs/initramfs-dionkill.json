@@ -1,0 +1,6 @@
+{
+  "id": "initramfs-dionkill",
+  "name": "initramfs.zip (DionKill)",
+  "summary": "Rescue initramfs bundle for Aeolia, Belize, and Baikal.",
+  "url": "https://github.com/DionKill/ps4-linux-tutorial/blob/main/PS4%20Linux/initramfs.zip"
+}

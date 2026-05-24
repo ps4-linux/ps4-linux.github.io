@@ -1,0 +1,7 @@
+{
+  "id": "debian-forky",
+  "name": "Debian Forky",
+  "family": "debian",
+  "summary": "Debian sid-based bleeding edge build.",
+  "url": "https://ps4linux.com/forums/d/373-debian-forky-sid/3"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "kali-linux",
+  "name": "Kali Linux",
+  "family": "debian",
+  "summary": "Kali edition based on Debian Forky.",
+  "url": "https://ps4linux.com/forums/d/392-debian-forky-kali-linux-edition"
+}

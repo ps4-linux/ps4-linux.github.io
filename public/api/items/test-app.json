@@ -1,0 +1,25 @@
+{
+  "id": "test-app",
+  "name": "Test App",
+  "type": "app",
+  "status": "platinum",
+  "tb": "@testuser",
+  "distro": "arch-baikal",
+  "kernel": "ps4-linux-12xx",
+  "compatibility": "Works perfectly",
+  "notes": "Testing the new fields.",
+  "proton": "",
+  "platform": "ps4",
+  "store": "psn",
+  "tags": [
+    "test"
+  ],
+  "models": [
+    "pro"
+  ],
+  "storage": "internal-ssd",
+  "fps": "",
+  "resolution": "",
+  "performance": "smooth",
+  "proof": "https://example.com/proof"
+}

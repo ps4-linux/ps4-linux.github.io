@@ -1,0 +1,7 @@
+{
+  "id": "arch",
+  "name": "Arch",
+  "family": "arch",
+  "summary": "Arch install with KDE, XFCE, or TempleOS options.",
+  "url": "https://github.com/ErkkolaMaitohappo/arch-ps4-aur-smth-fork/releases/"
+}

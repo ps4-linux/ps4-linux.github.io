@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pipadb.local/schema/entry.schema.json",
-  "title": "pipaDB entry",
+  "$id": "https://ps4-linux.local/schema/entry.schema.json",
+  "title": "ps4-linux entry",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "name", "status", "tb"],
+  "required": ["id", "name", "status", "tb", "kernel", "distro"],
   "properties": {
     "id": {
       "type": "string",
@@ -27,6 +27,14 @@
       "type": "string",
       "description": "Tester handle, example @username"
     },
+    "distro": {
+      "type": "string",
+      "description": "Distro used for testing, example 'arch-baikal' (refer to distros.json for IDs)"
+    },
+    "kernel": {
+      "type": "string",
+      "description": "Kernel used for testing, example 'ps4-linux-12xx' (refer to kernels.json for IDs)"
+    },
     "compatibility": {
       "type": "string"
     },
@@ -48,6 +56,39 @@
       "items": {
         "type": "string"
       }
+    },
+    "model": {
+      "type": "string",
+      "enum": ["pro", "slim", "fat"]
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["pro", "slim", "fat"]
+      }
+    },
+    "proof": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "description": "External link to video/screenshot proof. Not embedded."
+    },
+    "fps": {
+      "type": "string",
+      "description": "Observed framerate, e.g. '30', '45-60', 'locked 60'."
+    },
+    "resolution": {
+      "type": "string",
+      "description": "Render resolution, e.g. '1080p', '900p', '4K (Pro)'."
+    },
+    "performance": {
+      "type": "string",
+      "description": "Short performance note, e.g. 'smooth', 'stutters in cutscenes', 'long loads'."
+    },
+    "storage": {
+      "type": "string",
+      "description": "Storage used for testing, e.g. 'internal-hdd', 'internal-ssd', 'usb-ssd', 'nfs'."
     }
   }
 }

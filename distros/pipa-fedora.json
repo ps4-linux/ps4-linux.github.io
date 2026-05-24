@@ -1,7 +1,0 @@
-{
-  "id": "pipa-fedora",
-  "name": "pipa-fedora",
-  "family": "fedora",
-  "summary": "Non-atomic Fedora 43 builder by rr1111",
-  "url": "https://github.com/rr1111/pipa-fedora-builder-43"
-}

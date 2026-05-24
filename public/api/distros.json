@@ -1,30 +1,107 @@
 [
   {
-    "id": "armtix",
-    "name": "armtix",
-    "summary": "Artix Linux port by Neo10e",
-    "url": "https://github.com/Neo10e/armtix-xiaomi-pipa",
+    "id": "arch",
+    "name": "Arch",
+    "summary": "Arch install with KDE, XFCE, or TempleOS options.",
+    "url": "https://github.com/ErkkolaMaitohappo/arch-ps4-aur-smth-fork/releases/",
     "family": "arch"
   },
   {
-    "id": "pipa-fedora",
-    "name": "pipa-fedora",
-    "summary": "Non-atomic Fedora 43 builder by rr1111",
-    "url": "https://github.com/rr1111/pipa-fedora-builder-43",
+    "id": "arch-baikal",
+    "name": "Arch - Baikal Edition",
+    "summary": "Baikal-only test distro build.",
+    "url": "https://mega.nz/file/JNkUgZLY#q-XwRcz81SLyMBE_-RIpbtRZIi2pGaH-8xCc6-uFXRI",
+    "family": "arch"
+  },
+  {
+    "id": "batocera-40",
+    "name": "Batocera 40",
+    "summary": "Batocera build for retro gaming.",
+    "url": "https://ps4linux.com/forums/d/252-batocera-40-for-ps4-installation-setup-tutorial",
+    "family": "other"
+  },
+  {
+    "id": "cachyos",
+    "name": "CachyOS",
+    "summary": "Older CachyOS release (superseded).",
+    "url": "https://mega.nz/file/RyUVQARB#HZD49XXac_v2CYKD4Oqa7Tg1aiZ7ltH_cnDxixw9JjY",
+    "family": "arch"
+  },
+  {
+    "id": "cachyos-light",
+    "name": "CachyOS Light",
+    "summary": "Light LXQt CachyOS build with automatic Mesa updates (recommended).",
+    "url": "https://ps4linux.com/forums/d/422-cachyos-light-lxqt-a-light-and-fast-distro",
+    "family": "arch"
+  },
+  {
+    "id": "cachyos-strawberry-server",
+    "name": "CachyOS Strawberry Server Edition",
+    "summary": "Server-only CachyOS build (no desktop environment).",
+    "url": "https://github.com/sony-jaguar-devs/distros/releases",
+    "family": "arch"
+  },
+  {
+    "id": "debian-forky",
+    "name": "Debian Forky",
+    "summary": "Debian sid-based bleeding edge build.",
+    "url": "https://ps4linux.com/forums/d/373-debian-forky-sid/3",
+    "family": "debian"
+  },
+  {
+    "id": "debian-trixie",
+    "name": "Debian Trixie",
+    "summary": "Latest Debian Trixie build.",
+    "url": "https://ps4linux.com/forums/d/369-debien-trixie-full-update-mesa-2520-devel/13",
+    "family": "debian"
+  },
+  {
+    "id": "endeavouros",
+    "name": "EndeavourOS",
+    "summary": "Arch-based distro that is easy to maintain.",
+    "url": "https://ps4linux.com/forums/d/386-endeavouros-gaming-rebirth",
+    "family": "arch"
+  },
+  {
+    "id": "fedora-42",
+    "name": "Fedora 42",
+    "summary": "Fedora KDE on Wayland.",
+    "url": "https://ps4linux.com/forums/d/399-fedora42-by-qba-triki1kdewayland",
     "family": "fedora"
   },
   {
-    "id": "pocketblue",
-    "name": "PocketBlue",
-    "summary": "Atomic (immutable) Fedora image",
-    "url": "https://github.com/pocketblue/pocketblue",
-    "family": "atomic"
+    "id": "garuda",
+    "name": "Garuda",
+    "summary": "Garuda gaming-focused build.",
+    "url": "https://ps4linux.com/forums/d/415-garuda-dr460nized-gaming-v2/2",
+    "family": "arch"
   },
   {
-    "id": "postmarketos",
-    "name": "postmarketOS",
-    "summary": "Porting wiki for the Xiaomi Pad 6",
-    "url": "https://wiki.postmarketos.org/wiki/Xiaomi_Pad_6_(xiaomi-pipa)",
-    "family": "alpine"
+    "id": "jaguarlinux",
+    "name": "JaguarLinux",
+    "summary": "Void-based PS4 distro in development.",
+    "url": "https://ps4linux.com/forums/d/265-jaguarlinux-a-ps4-linux-only-distro-beta-release/3",
+    "family": "other"
+  },
+  {
+    "id": "kali-linux",
+    "name": "Kali Linux",
+    "summary": "Kali edition based on Debian Forky.",
+    "url": "https://ps4linux.com/forums/d/392-debian-forky-kali-linux-edition",
+    "family": "debian"
+  },
+  {
+    "id": "manjaro",
+    "name": "Manjaro",
+    "summary": "Manjaro KDE distro build.",
+    "url": "https://ps4linux.com/forums/d/342-manjaro-from-scratch",
+    "family": "arch"
+  },
+  {
+    "id": "xubuntu",
+    "name": "Xubuntu",
+    "summary": "Xubuntu build split into multiple files.",
+    "url": "https://ps4linux.com/forums/d/337-xubuntu-2504-final-release",
+    "family": "debian"
   }
 ]
